@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { SafeAreaView, Text, StyleSheet, View, TextInput, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const currencies = ['USD', 'EUR', 'BRL', 'GBP', 'JPY', 'AUD', 'CAD'];
 
 const App = () => {
-  const [value1, setValue1] = useState('');
-  const [value2, setValue2] = useState('');
+  const [value1, setValue1] = useState('1');
+  const [value2, setValue2] = useState('5.89');
+  const [coin, setCoin] = useState('BRL');
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedInput, setSelectedInput] = useState(null);
+
+  const openModal = (input: any) => {
+    setSelectedInput(input);
+    setModalVisible(true);
+  };
+
+  const handleCoin = (value: string) => {
+    setCoin(value);
+    setModalVisible(false);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -18,22 +30,28 @@ const App = () => {
         end={{ x: 1, y: 1 }}
         style={styles.background}
       />
-      <Text style={styles.title}>Coin</Text>
+      <Text style={styles.title}>Coin - {coin ?? coin} </Text>
       <View style={styles.form}>
+        {/* Primeiro Input */}
+
+        <Text style={styles.label}>Quantia</Text>
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Value"
             placeholderTextColor="#ccc"
             value={value1}
             onChangeText={setValue1}
             keyboardType="numeric"
             style={styles.input}
           />
-          <TouchableOpacity style={styles.currencyButton} onPress={() => setModalVisible(true)}>
-            <Icon name="attach-money" size={24} color="#fff" />
+          <TouchableOpacity style={styles.currencyButton} onPress={() => openModal('value1')}>
+            <MaterialIcons name="attach-money" size={24} color="#fff" />
           </TouchableOpacity>
         </View>
-        <Icon name="swap-vert" size={40} color="#fff" style={styles.icon} />
+
+        <MaterialIcons name="swap-vert" size={40} color="#fff" style={styles.icon} />
+
+        {/* Segundo Input */}
+        <Text style={styles.label}>Converter para</Text>
         <View style={styles.inputContainer}>
           <TextInput
             placeholder="Result"
@@ -42,8 +60,13 @@ const App = () => {
             editable={false}
             style={[styles.input, styles.disabledInput]}
           />
+          <TouchableOpacity style={styles.currencyButton} onPress={() => openModal('value2')}>
+            <MaterialIcons name="attach-money" size={24} color="#fff" />
+          </TouchableOpacity>
         </View>
       </View>
+
+      {/* Modal de Seleção de Moeda */}
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -52,7 +75,10 @@ const App = () => {
               data={currencies}
               keyExtractor={(item) => item}
               renderItem={({ item }) => (
-                <TouchableOpacity style={styles.currencyOption} onPress={() => setModalVisible(false)}>
+                <TouchableOpacity
+                  style={styles.currencyOption}
+                  onPress={() => handleCoin(item)}
+                >
                   <Text style={styles.currencyText}>{item}</Text>
                 </TouchableOpacity>
               )}
@@ -94,7 +120,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 5,
     elevation: 5,
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -122,6 +148,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     marginVertical: 10,
+    alignSelf: 'center',
   },
   disabledInput: {
     opacity: 0.6,
@@ -168,6 +195,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  label: {
+    fontSize: 14,
+    color: '#fff',
+    paddingBottom: 14,
+  }
 });
 
 export default App;
