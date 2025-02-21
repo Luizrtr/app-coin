@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, Modal, FlatList, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -17,7 +17,7 @@ interface InputProps {
 
 const InputContainer: React.FC<InputProps> = ({ value, onChangeValue, selectedCurrency, onSelectCurrency, currencies }) => {
   const [modalVisible, setModalVisible] = useState(false);
-
+  
   const handleSelectCurrency = (currency: ICurrencies) => {
     onSelectCurrency(currency);
     setModalVisible(false);
