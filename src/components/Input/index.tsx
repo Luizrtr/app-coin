@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, Modal, FlatList, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
 
 interface ICurrencies {
   code: string;
@@ -17,25 +16,37 @@ interface InputProps {
 
 const InputContainer: React.FC<InputProps> = ({ value, onChangeValue, selectedCurrency, onSelectCurrency, currencies }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  
+
+  const handleChangeValue = (text: string) => {
+    const sanitizedValue = text.replace(/[^0-9.]/g, '');
+    onChangeValue(sanitizedValue);
+    console.log(sanitizedValue);
+  };
+
   const handleSelectCurrency = (currency: ICurrencies) => {
     onSelectCurrency(currency);
     setModalVisible(false);
   };
+
+  const handleFocus = () => {
+    onChangeValue('');
+  };
+  
 
   return (
     <View style={styles.inputContainer}>
       <TextInput
         placeholderTextColor="#ccc"
         value={value}
-        onChangeText={onChangeValue}
+        onChangeText={handleChangeValue}
+        onFocus={handleFocus}
         keyboardType="numeric"
         style={styles.input}
       />
       <TouchableOpacity style={styles.currencyButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.currencyText}>{selectedCurrency.flag} {selectedCurrency.code}</Text>
+        <Text style={styles.currencyText}>{selectedCurrency?.flag || "🏳️"} {selectedCurrency?.code || "N/A"}</Text>
       </TouchableOpacity>
-      
+
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -45,7 +56,7 @@ const InputContainer: React.FC<InputProps> = ({ value, onChangeValue, selectedCu
               keyExtractor={(item) => item.code}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.currencyOption} onPress={() => handleSelectCurrency(item)}>
-                  <Text style={styles.currencyText}>{item.flag} {item.code}</Text>
+                  <Text style={styles.currencyText}>{item?.flag || "🏳️"} {item?.code || "N/A"}</Text>
                 </TouchableOpacity>
               )}
             />

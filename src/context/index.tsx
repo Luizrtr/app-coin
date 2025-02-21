@@ -9,6 +9,9 @@ interface CurrencyContextType {
   currencies: { code: string; flag: string; rate?: number }[];
   loading: boolean;
   error: string | null;
+  value1: number;
+  value2: number;
+  updateValue1: (newValue: string) => void;
 }
 
 export const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -24,23 +27,15 @@ const currencies = [
 ];
 
 const fetchCurrencyRates = async (): Promise<CurrencyRates | null> => {
-  try {
-    const response = await axios.get('https://api.exchangeratesapi.io/v1/latest?access_key=60f0f519d9d05bb1fb724dc53c182986&format=1');
-    if (response.data.success) {
-      return response.data.rates;
-    } else {
-      throw new Error('Falha ao obter taxas de câmbio');
-    }
-  } catch (error) {
-    console.error('Erro ao buscar dados de moedas:', error);
-    return null;
-  }
+  return null;
 };
 
 export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currencyData, setCurrencyData] = useState(currencies);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [value1, setValue1] = useState<number>(0);
+  const [value2, setValue2] = useState<number>(0);
 
   useEffect(() => {
     const getRates = async () => {
@@ -61,8 +56,14 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     getRates();
   }, []);
 
+  const updateValue1 = (newValue: string) => {
+    const numericValue = parseFloat(newValue.replace(',', '.')) || 0;
+    setValue1(numericValue);
+    setValue2(numericValue);
+  };
+
   return (
-    <CurrencyContext.Provider value={{ currencies: currencyData, loading, error }}>
+    <CurrencyContext.Provider value={{ currencies: currencyData, loading, error, value1, updateValue1, value2 }}>
       {children}
     </CurrencyContext.Provider>
   );

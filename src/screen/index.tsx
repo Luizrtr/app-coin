@@ -6,16 +6,21 @@ import Input from '../components/Input';
 import { CurrencyContext } from '../context/';
 
 const App = () => {
-  const { currencies, loading, error } = useContext(CurrencyContext) || { currencies: [], loading: true, error: null };
-  const [value1, setValue1] = useState('');
-  const [value2, setValue2] = useState('');
-  const [coin, setCoin] = useState(currencies[2]); // Padrão: BRL
-  const [coin2, setCoin2] = useState(currencies[0]); // Padrão: USD
+  const { currencies, loading, error, value1, value2 } = useContext(CurrencyContext) || { currencies: [], loading: true, error: null };
 
-  useEffect(() => {
-    setValue1('1');
-    setValue2('5.89');
-  }, []);
+  const [coin, setCoin] = useState(currencies[2] || { code: 'BRL', flag: '🇧🇷' });
+  const [coin2, setCoin2] = useState(currencies[0] || { code: 'USD', flag: '🇺🇸' });
+
+  const [inputValue1, setInputValue1] = useState(value1 !== undefined ? String(value1) : '');
+  const [inputValue2, setInputValue2] = useState(value2 !== undefined ? String(value2) : '');
+
+  const handleChangeValue1 = (text: string) => {
+    setInputValue1(text);
+  };
+
+  const handleChangeValue2 = (text: string) => {
+    setInputValue2(text);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -25,8 +30,8 @@ const App = () => {
       <View style={styles.form}>
         <Text style={styles.label}>Quantia</Text>
         <Input 
-          value={value1} 
-          onChangeValue={setValue1} 
+          value={inputValue1} 
+          onChangeValue={handleChangeValue1} 
           selectedCurrency={coin} 
           onSelectCurrency={setCoin} 
           currencies={currencies} 
@@ -36,8 +41,8 @@ const App = () => {
 
         <Text style={styles.label}>Converter para</Text>
         <Input 
-          value={value2} 
-          onChangeValue={setValue2} 
+          value={inputValue2} 
+          onChangeValue={handleChangeValue2} 
           selectedCurrency={coin2} 
           onSelectCurrency={setCoin2} 
           currencies={currencies} 
@@ -54,9 +59,6 @@ const styles = StyleSheet.create({
   form: { width: '95%', backgroundColor: '#212529', borderRadius: 10, padding: 20 },
   icon: { marginVertical: 10, alignSelf: 'center' },
   label: { fontSize: 14, color: '#fff', paddingBottom: 14 },
-  ratesContainer: { marginTop: 20, padding: 10, backgroundColor: '#343a40', borderRadius: 5 },
-  ratesTitle: { fontSize: 16, fontWeight: 'bold', color: '#fff', marginBottom: 10 },
-  rateText: { fontSize: 14, color: '#fff' },
 });
 
 export default App;
