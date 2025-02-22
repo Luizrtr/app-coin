@@ -5,13 +5,18 @@ interface CurrencyRates {
   [key: string]: number;
 }
 
+interface CurrencyValue {
+  amount: number;
+  code: string;
+}
+
 interface CurrencyContextType {
   currencies: { code: string; flag: string; rate?: number }[];
   loading: boolean;
   error: string | null;
-  value1: number;
-  value2: number;
-  updateValue1: (newValue: string) => void;
+  value1: CurrencyValue;
+  value2: CurrencyValue;
+  updateValue1: (newValue: string, currencyCode: string) => void;
 }
 
 export const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
@@ -34,8 +39,20 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [currencyData, setCurrencyData] = useState(currencies);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [value1, setValue1] = useState<number>(0);
-  const [value2, setValue2] = useState<number>(0);
+
+  const [value1, setValue1] = useState<CurrencyValue>({ amount: 1, code: 'BRL' });
+  const [value2, setValue2] = useState<CurrencyValue>({ amount: 5.73, code: 'USD' });
+
+  const updateValue1 = (newValue: string, currencyCode: string) => {
+    const numericValue = parseFloat(newValue.replace(',', '.')) || 0;
+    
+    setValue1({ amount: numericValue, code: currencyCode });
+    setValue2({ amount: numericValue, code: value2.code });
+  };
+
+  // const calculator = (value: number, code1: string, code2: string) => {
+
+  // }
 
   useEffect(() => {
     const getRates = async () => {
@@ -55,12 +72,6 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     getRates();
   }, []);
-
-  const updateValue1 = (newValue: string) => {
-    const numericValue = parseFloat(newValue.replace(',', '.')) || 0;
-    setValue1(numericValue);
-    setValue2(numericValue);
-  };
 
   return (
     <CurrencyContext.Provider value={{ currencies: currencyData, loading, error, value1, updateValue1, value2 }}>

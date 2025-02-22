@@ -20,7 +20,6 @@ const InputContainer: React.FC<InputProps> = ({ value, onChangeValue, selectedCu
   const handleChangeValue = (text: string) => {
     const sanitizedValue = text.replace(/[^0-9.]/g, '');
     onChangeValue(sanitizedValue);
-    console.log(sanitizedValue);
   };
 
   const handleSelectCurrency = (currency: ICurrencies) => {

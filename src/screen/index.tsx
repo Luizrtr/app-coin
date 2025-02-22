@@ -6,20 +6,35 @@ import Input from '../components/Input';
 import { CurrencyContext } from '../context/';
 
 const App = () => {
-  const { currencies, loading, error, value1, value2 } = useContext(CurrencyContext) || { currencies: [], loading: true, error: null };
+  const { currencies, loading, error, value1, value2, updateValue1 } = useContext(CurrencyContext) || {
+    currencies: [],
+    loading: true,
+    error: null,
+    value1: { amount: 0, code: 'BRL' },
+    value2: { amount: 0, code: 'USD' },
+    updateValue1: () => {},
+  };
 
-  const [coin, setCoin] = useState(currencies[2] || { code: 'BRL', flag: '🇧🇷' });
-  const [coin2, setCoin2] = useState(currencies[0] || { code: 'USD', flag: '🇺🇸' });
+  const [coin, setCoin] = useState(() => currencies.find(c => c.code === value1.code) || { code: 'BRL', flag: '🇧🇷' });
+  const [coin2, setCoin2] = useState(() => currencies.find(c => c.code === value2.code) || { code: 'USD', flag: '🇺🇸' });
 
-  const [inputValue1, setInputValue1] = useState(value1 !== undefined ? String(value1) : '');
-  const [inputValue2, setInputValue2] = useState(value2 !== undefined ? String(value2) : '');
+  const [inputValue1, setInputValue1] = useState(String(value1.amount));
+  const [inputValue2, setInputValue2] = useState(String(value2.amount));
+
+  useEffect(() => {
+    setInputValue1(String(value1.amount));
+    setInputValue2(String(value2.amount));
+  }, [value1, value2]);
 
   const handleChangeValue1 = (text: string) => {
     setInputValue1(text);
+    updateValue1(text, coin.code);
+    console.log(text, coin.code, coin2.code);
   };
 
   const handleChangeValue2 = (text: string) => {
     setInputValue2(text);
+    console.log(text, coin2.code, coin.code);
   };
 
   return (
@@ -45,7 +60,7 @@ const App = () => {
           onChangeValue={handleChangeValue2} 
           selectedCurrency={coin2} 
           onSelectCurrency={setCoin2} 
-          currencies={currencies} 
+          currencies={currencies}
         />
       </View>
     </SafeAreaView>
