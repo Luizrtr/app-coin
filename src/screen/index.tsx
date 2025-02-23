@@ -6,13 +6,22 @@ import Input from '../components/Input';
 import { CurrencyContext } from '../context/';
 
 const App = () => {
-  const { currencies, loading, error, value1, value2, updateValue1 } = useContext(CurrencyContext) || {
+  const { 
+    currencies, 
+    loading, 
+    error, 
+    value1, 
+    value2, 
+    updateValue1, 
+    calculator 
+  } = useContext(CurrencyContext) || {
     currencies: [],
     loading: true,
     error: null,
     value1: { amount: 0, code: 'BRL' },
     value2: { amount: 0, code: 'USD' },
     updateValue1: () => {},
+    calculator: () => null,
   };
 
   const [coin, setCoin] = useState(() => currencies.find(c => c.code === value1.code) || { code: 'BRL', flag: '🇧🇷' });
@@ -27,10 +36,15 @@ const App = () => {
   }, [value1, value2]);
 
   const handleChangeValue1 = (text: string) => {
+    const numericValue = parseFloat(text.replace(',', '.')) || 0;
+  
     setInputValue1(text);
     updateValue1(text, coin.code);
-    console.log(text, coin.code, coin2.code);
+  
+    const result = calculator(numericValue, coin.code, coin2.code);
+    console.log(result, numericValue, coin.code, coin2.code);
   };
+  
 
   const handleChangeValue2 = (text: string) => {
     setInputValue2(text);
