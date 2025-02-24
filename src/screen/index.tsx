@@ -13,6 +13,7 @@ const App = () => {
     value1, 
     value2, 
     updateValue1, 
+    updateValue2,
     calculator 
   } = useContext(CurrencyContext) || {
     currencies: [],
@@ -21,34 +22,45 @@ const App = () => {
     value1: { amount: 0, code: 'BRL' },
     value2: { amount: 0, code: 'USD' },
     updateValue1: () => {},
+    updateValue2: () => {},
     calculator: () => null,
   };
 
   const [coin, setCoin] = useState(() => currencies.find(c => c.code === value1.code) || { code: 'BRL', flag: '🇧🇷' });
   const [coin2, setCoin2] = useState(() => currencies.find(c => c.code === value2.code) || { code: 'USD', flag: '🇺🇸' });
 
-  const [inputValue1, setInputValue1] = useState(String(value1.amount));
-  const [inputValue2, setInputValue2] = useState(String(value2.amount));
+  const [inputValue1, setInputValue1] = useState(String(value1.amount).replace('.', ','));
+  const [inputValue2, setInputValue2] = useState(String(value2.amount).replace('.', ','));
 
   useEffect(() => {
-    setInputValue1(String(value1.amount));
-    setInputValue2(String(value2.amount));
+    setInputValue1(String(value1.amount).replace('.', ','));
+    setInputValue2(String(value2.amount).replace('.', ','));
   }, [value1, value2]);
 
   const handleChangeValue1 = (text: string) => {
     const numericValue = parseFloat(text.replace(',', '.')) || 0;
-  
+    
     setInputValue1(text);
-    updateValue1(text, coin.code);
-  
+    updateValue1(numericValue.toString(), coin.code);
+  console.log(numericValue, coin.code, coin2.code);
     const result = calculator(numericValue, coin.code, coin2.code);
-    console.log(result, numericValue, coin.code, coin2.code);
+    console.log(result);
+    if (result !== null) {
+      setInputValue2(result.toFixed(2).replace('.', ','));
+    }
   };
-  
 
   const handleChangeValue2 = (text: string) => {
+    const numericValue = parseFloat(text.replace(',', '.')) || 0;
+  
     setInputValue2(text);
-    console.log(text, coin2.code, coin.code);
+    updateValue2(numericValue.toString(), coin2.code);
+  
+    const result = calculator(numericValue, coin2.code, coin.code);
+    console.log(result);
+    if (result !== null) {
+      setInputValue1(result.toFixed(2).replace('.', ','));
+    }
   };
 
   return (
