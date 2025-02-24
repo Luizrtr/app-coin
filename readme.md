@@ -2,7 +2,7 @@
 
 ## 📽️ Demonstração
 
-[🎥 Assista ao vídeo de demonstração](src/assets/demo.mp4)
+[🎥 Assista ao vídeo de demonstração](src/assets/app.gif)
 
 Este projeto é um conversor de moedas que consome dados de uma API pública para obter as cotações em tempo real. Desenvolvido com **React**, utiliza **Context API** para gerenciar o estado global e **Axios** para requisições HTTP.
 
