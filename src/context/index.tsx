@@ -33,20 +33,23 @@
     { code: 'CAD', flag: '🇨🇦', rate: 1 },
   ];
 
-  const fetchCurrencyRates = async (): Promise<CurrencyRates | null> => {
-    // try {
-    //   const response = await axios.get('https://api.exchangeratesapi.io/v1/latest?access_key=60f0f519d9d05bb1fb724dc53c182986&format=1');
-    //   if (response.data.success) {
-    //     return response.data.rates;
-    //   } else {
-    //     throw new Error('Falha ao obter taxas de câmbio');
-    //   }
-    // } catch (error) {
-    //   console.error('Erro ao buscar dados de moedas:', error);
-    //   return null;
-    // }
-    return data;
-  };
+  const fetchCurrencyRates = async (useApi = false): Promise<CurrencyRates | null> => {
+    if (useApi) {
+      return data;
+    }
+
+      try {
+        const response = await axios.get('https://api.exchangeratesapi.io/v1/latest?access_key=60f0f519d9d05bb1fb724dc53c182986&format=1');
+        if (response.data.success) {
+          return response.data.rates;
+        } else {
+          throw new Error('Falha ao obter taxas de câmbio');
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados de moedas:', error);
+        return null;
+      }
+    }
 
   export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [currencyData, setCurrencyData] = useState(currencies);
